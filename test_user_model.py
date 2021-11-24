@@ -32,7 +32,7 @@ db.create_all()
 
 
 class UserModelTestCase(TestCase):
-    """Test views for messages."""
+    """Tests for user models."""
 
     def setUp(self):
         """Create test client, add sample data."""
@@ -40,19 +40,12 @@ class UserModelTestCase(TestCase):
         db.drop_all()
         db.create_all()
 
-        u1 = User(
-            email="test1@test.com",
-            username="testuser1",
-            password="HASHED_PASSWORD"
-        )
+        u1 = User.signup("testuser1", "test1@test.com", "HASHED_PASSWORD", None)
 
         u1id = 1
         u1.id =u1id
 
-        u2 = User(email="test2@test.com",
-            username="testuser2",
-            password="HASHED_PASSWORD"
-        )
+        u2 = User.signup("testuser2", "test2@test.com", "HASHED_PASSWORD", None)
 
         u2id = 2
         u2.id =u2id
@@ -163,8 +156,8 @@ class UserModelTestCase(TestCase):
         auth = User.authenticate(self.u1.username, "HASHED_PASSWORD")
         self.assertIsNotNone(auth)
         self.assertEqual(auth.id, 1)
-        self.assertEqual(auth.email, 'test@fake.com')
-        self.assertEqual(auth.username, 'test')
+        self.assertEqual(auth.email, 'test1@test.com')
+        self.assertEqual(auth.username, 'testuser1')
         self.assertEqual(auth.image_url, '/static/images/default-pic.png')
         self.assertTrue(auth.password.startswith("$2b$"))
 
@@ -175,5 +168,6 @@ class UserModelTestCase(TestCase):
 
     def test_fail_authenticate_password(self):
         """Does User.authenticate fail to return a user when the password is invalid?"""
-    
-        self.assertFalse(User.authenticate(self.u1.username, 'BAD_PASSWORD'))
+        
+        InvalidPW = ""
+        self.assertFalse(User.authenticate(self.u1.username, InvalidPW))
